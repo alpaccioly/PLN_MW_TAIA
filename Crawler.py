@@ -56,13 +56,13 @@ while len(urls) != 0:
 	 			print tag['href'] , tag.text
 
 				# not visited
-				if tag['href'] not in visited:
-					urls.append(tag['href'])
-					visited.append(tag['href'])
-
-					if len(visited) == max_pages:
-						stop_expanding = True
-						break
+				# if tag['href'] not in visited:
+				# 	urls.append(tag['href'])
+				# 	visited.append(tag['href'])
+                #
+				# 	if len(visited) == max_pages:
+				# 		stop_expanding = True
+				# 		break
 
 	#Categories assigned links
 	print 'Categories'
