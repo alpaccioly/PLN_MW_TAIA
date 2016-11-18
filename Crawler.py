@@ -29,63 +29,62 @@ max_pages = 500
 
 Util.deleteFilesFromFolder()
 
-while len(urls) != 0 & count < max_pages:
-	print(len(urls))
+while ((len(urls) != 0) & (count < max_pages)):
+	print("LEN",len(urls))
+	print("COUNT",count)
+	
 	try:
 		print(urls[0])
 		html_text = urllib2.urlopen(urls[0],context=ctx).read()
 
+		# Removes saved html link from queue
+
+		print("URL --------> ",urls.pop(0))
+
+
+		soup = BeautifulSoup(html_text, "html.parser")
+
+		# Expands actual url to find more non-visited urls
+
+		#Body links
+		bodyLinks = []
+		paragraphs = soup.findAll('p')
+		for paragraph in paragraphs:
+			tags = paragraph.findAll('a', href=True)
+			for tag in tags:
+				tag['href'] = urlparse.urljoin(url, tag['href'])
+				if "cite_note" not in tag['href']:
+					bodyLinks.append({(tag['href']),tag.text})
+		 			print tag['href'] , tag.text
+
+					# not visited
+					if tag['href'] not in visited:
+						urls.append(tag['href'])
+						visited.append(tag['href'])
+
+		#Categories assigned links
+		print 'Categories'
+		categories = set()
+		links = soup.findAll('a', href = re.compile('^/wiki/Category'))
+		for link in links:
+			categories.add(str(links))
+
+		print categories
+
+		wikipediaPage = WikipediaPage(html_text,bodyLinks,categories)
+
+		#Saving the file
+		file = path + str(count) + ".pkl"
+		with open(file, 'wb') as output:
+			pickle.dump(wikipediaPage,output, pickle.HIGHEST_PROTOCOL)
+			count = count + 1
+
+
 	except Exception, e:
 		print("Error: " + urls[0])
 		print(e)
-		sys.exit(1)
-
-	# Removes saved html link from queue
-
-	print("URL --------> ",urls.pop(0))
-
-
-	soup = BeautifulSoup(html_text, "html.parser")
-
-	# Expands actual url to find more non-visited urls
-
-	#Body links
-	bodyLinks = []
-	paragraphs = soup.findAll('p')
-	for paragraph in paragraphs:
-		tags = paragraph.findAll('a', href=True)
-		for tag in tags:
-			tag['href'] = urlparse.urljoin(url, tag['href'])
-			if "cite_note" not in tag['href']:
-				bodyLinks.append({(tag['href']),tag.text})
-	 			print tag['href'] , tag.text
-
-				# not visited
-				if tag['href'] not in visited:
-					urls.append(tag['href'])
-					visited.append(tag['href'])
-
-					if len(visited) == max_pages:
-						stop_expanding = True
-						break
-
-	#Categories assigned links
-	print 'Categories'
-	categories = set()
-	links = soup.findAll('a', href = re.compile('^/wiki/Category'))
-	for link in links:
-		categories.add(str(links))
-
-	print categories
-
-	wikipediaPage = WikipediaPage(html_text,bodyLinks,categories)
-
-	#Saving the file
-	file = path + str(count) + ".pkl"
-	with open(file, 'wb') as output:
-		pickle.dump(wikipediaPage,output, pickle.HIGHEST_PROTOCOL)
-		count = count + 1
-
+		urls.pop(0)
+		
 
 now2 = datetime.datetime.now()
 print("Time",str(now2-now))
