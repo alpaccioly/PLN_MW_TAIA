@@ -7,9 +7,10 @@ import os.path
 import Util
 import pickle
 import datetime
+import sys
+from WikipediaPage import WikipediaPage
 
 now = datetime.datetime.now()
-from WikipediaPage import WikipediaPage
 
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
@@ -23,24 +24,28 @@ visited = [url]
 
 count = 1
 stop_expanding = False
-max_pages = 5
+max_pages = 500
+
 
 Util.deleteFilesFromFolder()
 
-while len(urls) != 0:
+while len(urls) != 0 & count < max_pages:
 	print(len(urls))
 	try:
+		print(urls[0])
 		html_text = urllib2.urlopen(urls[0],context=ctx).read()
 
 	except Exception, e:
 		print("Error: " + urls[0])
+		print(e)
+		sys.exit(1)
 
 	# Removes saved html link from queue
 
 	print("URL --------> ",urls.pop(0))
 
-	if not stop_expanding:
-		soup = BeautifulSoup(html_text, "html.parser")
+
+	soup = BeautifulSoup(html_text, "html.parser")
 
 	# Expands actual url to find more non-visited urls
 
@@ -56,21 +61,20 @@ while len(urls) != 0:
 	 			print tag['href'] , tag.text
 
 				# not visited
-				# if tag['href'] not in visited:
-				# 	urls.append(tag['href'])
-				# 	visited.append(tag['href'])
-                #
-				# 	if len(visited) == max_pages:
-				# 		stop_expanding = True
-				# 		break
+				if tag['href'] not in visited:
+					urls.append(tag['href'])
+					visited.append(tag['href'])
+
+					if len(visited) == max_pages:
+						stop_expanding = True
+						break
 
 	#Categories assigned links
 	print 'Categories'
 	categories = set()
-	for table in soup.findAll('table', attrs = {'class' : 'vertical-navbox nowraplinks'}):
-		links = table.findAll('a', href = re.compile('^/wiki/Category'))
-		for link in links:
-			categories.add(str(links))
+	links = soup.findAll('a', href = re.compile('^/wiki/Category'))
+	for link in links:
+		categories.add(str(links))
 
 	print categories
 
@@ -82,10 +86,9 @@ while len(urls) != 0:
 		pickle.dump(wikipediaPage,output, pickle.HIGHEST_PROTOCOL)
 		count = count + 1
 
-print("now")
-now2 = datetime.datetime.now()
 
-print(now2-now)
+now2 = datetime.datetime.now()
+print("Time",str(now2-now))
 
 
 
