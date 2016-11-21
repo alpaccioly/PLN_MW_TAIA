@@ -24,7 +24,7 @@ visited = [url]
 
 count = 1
 stop_expanding = False
-max_pages = 500
+max_pages = 1
 
 
 Util.deleteFilesFromFolder()
@@ -46,6 +46,9 @@ while ((len(urls) != 0) & (count <= max_pages)):
 
 		# Expands actual url to find more non-visited urls
 
+		title = soup.title.string
+		print title
+
 		#Body links
 		bodyLinks = []
 		paragraphs = soup.findAll('p')
@@ -55,7 +58,7 @@ while ((len(urls) != 0) & (count <= max_pages)):
 				tag['href'] = urlparse.urljoin(url, tag['href'])
 				if "cite_note" not in tag['href']:
 					bodyLinks.append({(tag['href']),tag.text})
-		 			print tag['href'] , tag.text
+		 			print tag['href'] #, tag.text
 
 					# not visited
 					if tag['href'] not in visited:
@@ -71,7 +74,7 @@ while ((len(urls) != 0) & (count <= max_pages)):
 
 		print categories
 
-		wikipediaPage = WikipediaPage(html_text,bodyLinks,categories)
+		wikipediaPage = WikipediaPage(title, html_text,bodyLinks,categories)
 
 		#Saving the file
 		file = path + str(count) + ".pkl"
