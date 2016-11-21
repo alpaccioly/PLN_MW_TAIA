@@ -7,3 +7,6 @@ wikipediaPageList = Util.getWikipediaPages()
 
 print(len(wikipediaPageList))
 
+wikipediaPage = wikipediaPageList[0]
+print wikipediaPage.html
+print wikipediaPage.links

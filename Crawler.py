@@ -29,7 +29,7 @@ max_pages = 500
 
 Util.deleteFilesFromFolder()
 
-while ((len(urls) != 0) & (count < max_pages)):
+while ((len(urls) != 0) & (count <= max_pages)):
 	print("LEN",len(urls))
 	print("COUNT",count)
 	
