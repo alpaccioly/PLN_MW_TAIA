@@ -7,7 +7,6 @@ import os.path
 import Util
 import pickle
 import datetime
-import sys
 from WikipediaPage import WikipediaPage
 
 now = datetime.datetime.now()
@@ -24,74 +23,68 @@ visited = [url]
 
 count = 1
 stop_expanding = False
-max_pages = 1
-
+max_pages = 5
 
 Util.deleteFilesFromFolder()
 
 while ((len(urls) != 0) & (count <= max_pages)):
-	print("LEN",len(urls))
-	print("COUNT",count)
-	
-	try:
-		print(urls[0])
-		html_text = urllib2.urlopen(urls[0],context=ctx).read()
+    print("LEN", len(urls))
+    print("COUNT", count)
 
-		# Removes saved html link from queue
+    try:
+        print(urls[0])
+        html_text = urllib2.urlopen(urls[0], context=ctx).read()
 
-		print("URL --------> ",urls.pop(0))
+        # Removes saved html link from queue
 
+        print("URL --------> ", urls.pop(0))
 
-		soup = BeautifulSoup(html_text, "html.parser")
+        soup = BeautifulSoup(html_text, "html.parser")
+        title = str(soup.title.string)
 
-		# Expands actual url to find more non-visited urls
+        # Expands actual url to find more non-visited urls
 
-		title = soup.title.string
-		print title
+        # Body links
+        bodyLinks = []
+        paragraphs = soup.findAll('p')
+        for paragraph in paragraphs:
+            tags = paragraph.findAll('a', href=True)
+            for tag in tags:
+                tag['href'] = urlparse.urljoin(url, tag['href'])
+                if "cite_note" not in tag['href']:
+                    bodyLinks.append({(tag['href']), tag.text})
+                    print tag['href'], tag.text
 
-		#Body links
-		bodyLinks = []
-		paragraphs = soup.findAll('p')
-		for paragraph in paragraphs:
-			tags = paragraph.findAll('a', href=True)
-			for tag in tags:
-				tag['href'] = urlparse.urljoin(url, tag['href'])
-				if "cite_note" not in tag['href']:
-					bodyLinks.append({(tag['href']),tag.text})
-		 			print tag['href'] #, tag.text
+                    # not visited
+                    if tag['href'] not in visited:
+                        urls.append(tag['href'])
+                        visited.append(tag['href'])
 
-					# not visited
-					if tag['href'] not in visited:
-						urls.append(tag['href'])
-						visited.append(tag['href'])
+        # Categories assigned links
+        print 'Categories'
+        categories = set()
+        links = soup.findAll('a', href=re.compile('^/wiki/Category'))
+        for link in links:
+            categories.add(str(links))
 
-		#Categories assigned links
-		print 'Categories'
-		categories = set()
-		links = soup.findAll('a', href = re.compile('^/wiki/Category'))
-		for link in links:
-			categories.add(str(links))
+        print categories
 
-		print categories
+        wikipediaPage = WikipediaPage(title,html_text, bodyLinks, categories)
 
-		wikipediaPage = WikipediaPage(title, html_text,bodyLinks,categories)
-
-		#Saving the file
-		file = path + str(count) + ".pkl"
-		with open(file, 'wb') as output:
-			pickle.dump(wikipediaPage,output, pickle.HIGHEST_PROTOCOL)
-			count = count + 1
+        # Saving the file
+        file = path + str(count) + ".pkl"
+        with open(file, 'wb') as output:
+            pickle.dump(wikipediaPage, output, pickle.HIGHEST_PROTOCOL)
+            count = count + 1
 
 
-	except Exception, e:
-		print("Error: " + urls[0])
-		print(e)
-		urls.pop(0)
-		
+    except Exception, e:
+        print("Error: " + urls[0])
+        print(e)
+        urls.pop(0)
 
 now2 = datetime.datetime.now()
-print("Time",str(now2-now))
-
+print("Time", str(now2 - now))
 
 
 
