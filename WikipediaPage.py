@@ -10,4 +10,3 @@ class WikipediaPage:
         self.links = links
         self.categories = categories
 
-    #geters and seters
