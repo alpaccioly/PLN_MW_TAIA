@@ -29,7 +29,7 @@ visited = [url]
 
 count = 1
 stop_expanding = False
-max_pages = 1
+max_pages = 500
 
 Util.deleteFilesFromFolder()
 
@@ -53,7 +53,7 @@ while ((len(urls) != 0) & (count <= max_pages)):
         contents = soup.findAll('p')
         for content in contents:
             text = text + "\n" + content.text
-        print text
+        #print text
 
         # Expands actual url to find more non-visited urls
         bodyLinks = []
