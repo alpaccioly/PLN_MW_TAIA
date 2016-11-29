@@ -7,13 +7,18 @@ import os.path
 import Util
 import pickle
 import datetime
-from WikipediaPage import WikipediaPage
+from WikiPage import WikiPage
+import wikipedia
+import sys
 
 begin = datetime.datetime.now()
 
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 #start page
 url = "https://en.wikipedia.org/wiki/Small-world_network"
@@ -24,7 +29,7 @@ visited = [url]
 
 count = 1
 stop_expanding = False
-max_pages = 500
+max_pages = 1
 
 Util.deleteFilesFromFolder()
 
@@ -36,10 +41,19 @@ while ((len(urls) != 0) & (count <= max_pages)):
         html_text = urllib2.urlopen(urls[0], context=ctx).read()
 
         # Removes saved html link from queue
-        print("URL --------> ", urls.pop(0))
+        url = urls.pop(0)
+        print("URL --------> ",url)
 
         soup = BeautifulSoup(html_text, "html.parser")
         title = str(soup.title.string)
+        title = title[:len(title)-12]
+        #print wikipedia.page(title).content
+
+        text = ""
+        contents = soup.findAll('p')
+        for content in contents:
+            text = text + "\n" + content.text
+        print text
 
         # Expands actual url to find more non-visited urls
         bodyLinks = []
@@ -50,8 +64,8 @@ while ((len(urls) != 0) & (count <= max_pages)):
                 tag['href'] = urlparse.urljoin(url, tag['href'])
                 if "cite_note" not in tag['href']:
                     if tag['href'] not in bodyLinks:
-                        bodyLinks.append(tag['href'])
-                        print tag['href']
+                        bodyLinks.append({tag['href'],str(tag.string)})
+                        print tag['href'],str(tag.string)
 
                         if tag['href'] not in visited:
                             urls.append(tag['href'])
@@ -66,18 +80,19 @@ while ((len(urls) != 0) & (count <= max_pages)):
         print categories
 
         #Creating object (doc node)
-        wikipediaPage = WikipediaPage(title,html_text, bodyLinks, categories)
+        wikiPage = WikiPage(title,html_text, text, bodyLinks, categories)
 
         # Saving the object in a file
         file = path + str(count) + ".pkl"
         with open(file, 'wb') as output:
-            pickle.dump(wikipediaPage, output, pickle.HIGHEST_PROTOCOL)
+            pickle.dump(wikiPage, output, pickle.HIGHEST_PROTOCOL)
             count = count + 1
 
     except Exception, e:
-        print("Error: " + urls[0])
+        print("Error: " + url)
         print(e)
-        urls.pop(0)
+        if urls:
+            urls.pop(0)
 
 end = datetime.datetime.now()
 print("Time", str(end - begin))

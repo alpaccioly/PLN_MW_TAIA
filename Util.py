@@ -1,5 +1,5 @@
 import os.path
-import WikipediaPage
+import WikiPage
 import pickle
 
 
