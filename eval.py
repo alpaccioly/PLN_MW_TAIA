@@ -43,9 +43,14 @@ data = [
     {'page':'Crust (geology)', 'candidates':['Mercury (element)','Mercury (planet)', 'Mercury (Marvel Comics)','Mercury (mythology)']},
     {'page':'Euchre', 'candidates':['Joker (playing card)', 'Joker (character)', 'Joker (2012 film)', 'Joker (musician)']},
     {'page':'Mark Hamill', 'candidates':['Joker (playing card)', 'Joker (character)', 'Joker (2012 film)', 'Joker (musician)']},
-    {'page':'Briton Hadden', 'candidates':['Magazine (artillery)', 'Magazine (firearms)', 'Magazine (band)', 'Magazine']},
-    {'page':'Missile', 'candidates':['Magazine (artillery)', 'Magazine (firearms)', 'Magazine (band)', 'Magazine']},
-        ]
+    {'page':'Dimensionality reduction', 'candidates':['Vector (mathematics)', 'Vector (epidemiology)', 'Vector (comics)', 'Array data structure']},
+    {'page':'Lyme disease', 'candidates':['Vector (mathematics)', 'Vector (epidemiology)', 'Vector (comics)', 'Array data structure']},
+    {'page':'Chemical equation', 'candidates':['Chemical decomposition', 'Matrix decomposition', 'Decomposition (computer science)']},
+    {'page':'Urban planning', 'candidates':['Population density', 'Probability density function', 'Density']},
+    {'page':'Iridium', 'candidates':['Population density', 'Probability density function', 'Density']},
+    {'page':'Brothers Grimm', 'candidates':['Aurora', 'Aurora, Florence County, Wisconsin', 'Aurora (Spencer, Virginia)', 'Aurora (mythology)', 'Aurora (given name)', 'Aurora (Disney character)']},
+    {'page':'U.S. state', 'candidates':['Aurora', 'Aurora, Florence County, Wisconsin', 'Aurora (Spencer, Virginia)', 'Aurora (mythology)', 'Aurora (given name)', 'Aurora (Disney character)']},
+]
 
 # data = [{'page':'Dii Consentes', 'candidates':['Mercury (element)','Mercury (planet)', 'Mercury (Marvel Comics)','Mercury (mythology)']}]
 
@@ -74,6 +79,4 @@ for dat in data:
     print "\n", page
     for i in range(0,len(candidates)):
         feat = matrix[i+1,:]
-        from scipy.linalg import norm
-        print "vector norm: ", norm(feat)
-        print candidates[i], ": ", cosine(pagefeat,feat)
+        print candidates[i], ": ", cosine(pagefeat, feat)
