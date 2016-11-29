@@ -29,7 +29,7 @@ visited = [url]
 
 count = 1
 stop_expanding = False
-max_pages = 500
+max_pages = 2
 
 Util.deleteFilesFromFolder()
 
@@ -80,7 +80,7 @@ while ((len(urls) != 0) & (count <= max_pages)):
         print categories
 
         #Creating object (doc node)
-        wikiPage = WikiPage(title,html_text, text, bodyLinks, categories)
+        wikiPage = WikiPage(url, title,html_text, text, bodyLinks, categories)
 
         # Saving the object in a file
         file = path + str(count) + ".pkl"
