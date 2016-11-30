@@ -17,5 +17,6 @@ for i in Range(len(wikipediaPageList)):
 
 print wikipediaPage.title
 print wikipediaPage.html
+print wikipediaPage.content
 print wikipediaPage.categories
 print wikipediaPage.links
