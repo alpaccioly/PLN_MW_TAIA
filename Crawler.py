@@ -64,7 +64,7 @@ while ((len(urls) != 0) & (count <= max_pages)):
                 tag['href'] = urlparse.urljoin(url, tag['href'])
                 if "cite_note" not in tag['href']:
                     if tag['href'] not in bodyLinks:
-                        bodyLinks.append({tag['href'],str(tag.string)})
+                        bodyLinks.append([str(tag.string),tag['href']])
                         print tag['href'],str(tag.string)
 
                         if tag['href'] not in visited:
