@@ -29,7 +29,7 @@ visited = [url]
 
 count = 1
 stop_expanding = False
-max_pages = 2
+max_pages = 500
 
 Util.deleteFilesFromFolder()
 
@@ -64,7 +64,7 @@ while ((len(urls) != 0) & (count <= max_pages)):
                 tag['href'] = urlparse.urljoin(url, tag['href'])
                 if "cite_note" not in tag['href']:
                     if tag['href'] not in bodyLinks:
-                        bodyLinks.append([str(tag.string),tag['href']])
+                        bodyLinks.append((str(tag.string),tag['href']))
                         print tag['href'],str(tag.string)
 
                         if tag['href'] not in visited:
