@@ -15,6 +15,16 @@ def vectorize(a,b):
         v2[idx] = 1
     return v1,v2
 
+def saveMeasures(tn, tp, fn, fp):
+    global total_tn
+    global total_tp
+    global total_fn
+    global total_fp
+    total_tn += tn
+    total_tp += tp
+    total_fn += fn
+    total_fp += fp
+
 def calculatePrecision(tn, tp, fn, fp):
     if tp + fp == 0:
         pr = 0
@@ -63,11 +73,18 @@ def calculateMetrics(a,b):
     recall = calculateRecall(tn, tp, fn, fp)
     accuracy = calculateAccuracy(tn, tp, fn, fp)
     fmeasure = calculateFmeasure(precision, recall)
+
+    saveMeasures(tn, tp, fn, fp)
+
     return {'precision':precision, 'recall':recall, 'accuracy':accuracy, 'f-measure':fmeasure}
 
 ## so p testar
 def process(document):
     return document.links
+
+
+##################### main #####################
+
 
 # a = [('a',21),('b',43),('c',23),('d',30),('e',45)] # ground truth
 # b = [('a',0),('d',30),('e',45),('f',21)]           # estimate
@@ -75,15 +92,21 @@ def process(document):
 # metrics = calculateMetrics(v1,v2)
 # print metrics
 
-# read all pages in the database
+
+# read the database
 database = Util.getWikipediaPages()
 
-print "Size of the database: ", len(database), "\n"
+print "Size of the database: ", len(database)
 
 total_accuracy = []
 total_precision = []
 total_recall = []
 total_fmeasure = []
+
+total_tp = 0
+total_tn = 0
+total_fp = 0
+total_fn = 0
 
 for document in database:
     # process eh a funcao que vai fazer tudo e devolver os links
@@ -111,3 +134,9 @@ print "\tAccuracy: ", accuracy
 print "\tPrecision: ", precision
 print "\tRecall: ", recall
 print "\tF-measure: ", fmeasure
+
+print "\nMedia micro das medidas"
+print "\tAccuracy: ", calculateAccuracy(total_tn, total_tp, total_fn, total_fp)
+print "\tPrecision: ", calculatePrecision(total_tn, total_tp, total_fn, total_fp)
+print "\tRecall: ", calculateRecall(total_tn, total_tp, total_fn, total_fp)
+print "\tF-measure: ", calculateFmeasure(calculatePrecision(total_tn, total_tp, total_fn, total_fp), calculateRecall(total_tn, total_tp, total_fn, total_fp))
