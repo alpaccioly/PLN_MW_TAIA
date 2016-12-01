@@ -2,21 +2,18 @@ import Util
 import urlparse
 from bs4 import BeautifulSoup
 import re
+from WikiCore import WikiCore
+
 
 wikipediaPageList = Util.getWikipediaPages()
 
+core = WikiCore(wikipediaPageList)
 
-index = {}
-for i in Range(len(wikipediaPageList)):
-	wikipediaPage = wikipediaPageList[i]
-	index[wikipediaPage.title] = i
-
-
-
-
-
-print wikipediaPage.title
-print wikipediaPage.html
-print wikipediaPage.content
-print wikipediaPage.categories
-print wikipediaPage.links
+for i in range(20):
+	print wikipediaPageList[i].title
+	cand = core.generateCandidates(wikipediaPageList[i])
+	print "--"
+	for j in cand:
+		print wikipediaPageList[j].title
+	print cand
+	print "------------------------------------------------------------"
