@@ -13,6 +13,7 @@ class WikiCore:
 		self.pages = pages
 		
 		self.stop_words = set(stopwords.words('english'))
+		print self.stop_words
 
 		for i in range(len(pages)):
 			wikipediaPage = pages[i]
@@ -39,14 +40,22 @@ class WikiCore:
 			w = words[i].upper()
 			j = 1;
 			verbets = self.search(w.split(' '))
+			cand_verbete = set()
 			while(len(verbets) != 0 and (i+j)<len(words)):
 				t = self.check_candidates(verbets, w)
-				cand = set.union(cand,t)
+				cand_verbete = set.union(cand_verbete,t)
 				if(i+j<len(words) and words[i+j] not in self.stop_words):
 					w = w+" "+words[i+j].upper()
-					q = w.split(' ')	
+					q = w.split(' ')
 					verbets = self.search(q)
 				j = j+1
+
+			cand_verbete = list(cand_verbete)
+			cand_verbete = sorted(cand_verbete, key = lambda x: -x[0])
+			if(len(cand_verbete)>0):
+				max_value = cand_verbete[0][0]
+			cand_verbete = filter(lambda x: x[0]>= max_value, cand_verbete)	
+			cand = set.union(cand,cand_verbete)
 			i = i+1
 		return cand
 
@@ -72,9 +81,9 @@ class WikiCore:
 
 			inter_size = len(w_words & title_words)
 			union_size = len(w_words | title_words)
-			
-			if(float(inter_size)/union_size > 0.6):
-				sel = set.union(sel,set({(w,ind)}))
+			factor = float(inter_size)/union_size
+			if(factor>0.6):
+				sel = set.union(sel,set({(factor,w,ind)}))
 		return sel
 
 	def minimumEditDistance(self, s1,s2):

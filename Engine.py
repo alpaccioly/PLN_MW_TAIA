@@ -12,6 +12,6 @@ core = WikiCore(wikipediaPageList)
 print wikipediaPageList[18].title
 cand = core.generateCandidates(wikipediaPageList[18])
 print "--"
-for (w,j) in cand:
-	print w+" || "+wikipediaPageList[j].title
+for (f,w,j) in cand:
+	print str(f)+" || "+w+" || "+wikipediaPageList[j].title
 	print "------------------------------------------------------------"
