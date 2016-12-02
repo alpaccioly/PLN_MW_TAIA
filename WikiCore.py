@@ -13,8 +13,7 @@ class WikiCore:
 		self.pages = pages
 		
 		self.stop_words = set(stopwords.words('english'))
-		print self.stop_words
-
+		
 		for i in range(len(pages)):
 			wikipediaPage = pages[i]
 			title = wikipediaPage.title.upper()
@@ -42,7 +41,7 @@ class WikiCore:
 			verbets = self.search(w.split(' '))
 			cand_verbete = set()
 			while(len(verbets) != 0 and (i+j)<len(words)):
-				t = self.check_candidates(verbets, w)
+				t = self.check_candidates(verbets, w, i,j)
 				cand_verbete = set.union(cand_verbete,t)
 				if(i+j<len(words) and words[i+j] not in self.stop_words):
 					w = w+" "+words[i+j].upper()
@@ -70,7 +69,7 @@ class WikiCore:
 			return rst
 		return set()
 
-	def check_candidates(self, articles_ids, w):
+	def check_candidates(self, articles_ids, w, i,j):
 		sel = set()
 		for ind in articles_ids:
 			title = self.pages[ind].title.upper()
@@ -83,7 +82,7 @@ class WikiCore:
 			union_size = len(w_words | title_words)
 			factor = float(inter_size)/union_size
 			if(factor>0.6):
-				sel = set.union(sel,set({(factor,w,ind)}))
+				sel = set.union(sel,set({(factor,w,i,j,ind)}))
 		return sel
 
 	def minimumEditDistance(self, s1,s2):
