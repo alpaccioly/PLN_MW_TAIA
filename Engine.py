@@ -9,11 +9,9 @@ wikipediaPageList = Util.getWikipediaPages()
 
 core = WikiCore(wikipediaPageList)
 
-for i in range(20):
-	print wikipediaPageList[i].title
-	cand = core.generateCandidates(wikipediaPageList[i])
-	print "--"
-	for j in cand:
-		print wikipediaPageList[j].title
-	print cand
+print wikipediaPageList[18].title
+cand = core.generateCandidates(wikipediaPageList[18])
+print "--"
+for (w,j) in cand:
+	print w+" || "+wikipediaPageList[j].title
 	print "------------------------------------------------------------"
