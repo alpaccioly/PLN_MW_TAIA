@@ -8,7 +8,6 @@ import Util
 import pickle
 import datetime
 from WikiPage import WikiPage
-import wikipedia
 import sys
 
 begin = datetime.datetime.now()
@@ -20,7 +19,8 @@ ctx.verify_mode = ssl.CERT_NONE
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-#start page
+prefix = "https://en.wikipedia.org/"
+# start page
 url = "https://en.wikipedia.org/wiki/Small-world_network"
 path = os.path.dirname(os.path.abspath(__file__)) + '/files/'
 
@@ -29,43 +29,51 @@ visited = [url]
 
 count = 1
 stop_expanding = False
-max_pages = 500
+max_pages = 5000
 
 Util.deleteFilesFromFolder()
 
 while ((len(urls) != 0) & (count <= max_pages)):
     print("COUNT", count)
+    alreadyPop = False
 
     try:
-        #get html page from url
-        html_text = urllib2.urlopen(urls[0], context=ctx).read()
+        # get html page from url
+        urllibObj = urllib2.urlopen(urls[0], context=ctx)
+        html_text = urllibObj.read()
 
         # Removes saved html link from queue
+
         url = urls.pop(0)
-        print("URL --------> ",url)
+        alreadyPop = True
+        # if urllibObj.geturl() is not None:
+        #     url = urllibObj.geturl()
+
+        print("URL --------> ", url)
 
         soup = BeautifulSoup(html_text, "html.parser")
         title = str(soup.title.string)
-        title = title[:len(title)-12]
-        #print wikipedia.page(title).content
+        title = title[:len(title) - 12]
+        # print wikipedia.page(title).content
 
         text = ""
         contents = soup.findAll('p')
         for content in contents:
             text = text + "\n" + content.text
-        #print text
+        # print text
 
         # Expands actual url to find more non-visited urls
         bodyLinks = []
         paragraphs = soup.findAll('p')
         for paragraph in paragraphs:
-            tags = paragraph.findAll('a', href=True)
+            tags = paragraph.findAll('a', href=re.compile('^/wiki/'))
             for tag in tags:
                 tag['href'] = urlparse.urljoin(url, tag['href'])
                 if "cite_note" not in tag['href']:
-                    if tag['href'] not in bodyLinks:
-                        bodyLinks.append((str(tag.string),tag['href']))
-                        print tag['href'],str(tag.string)
+                    bodyLinksUrl = [j[1] for j in bodyLinks]
+                    if tag['href'] not in bodyLinksUrl:
+                        bodyLinks.append((str(tag.string), tag['href']))
+                        print tag['href'], str(tag.string)
 
                         if tag['href'] not in visited:
                             urls.append(tag['href'])
@@ -79,8 +87,8 @@ while ((len(urls) != 0) & (count <= max_pages)):
             categories.add(str(links))
         print categories
 
-        #Creating object (doc node)
-        wikiPage = WikiPage(url, title,html_text, text, bodyLinks, categories)
+        # Creating object (doc node)
+        wikiPage = WikiPage(url, title, html_text, text, bodyLinks, categories)
 
         # Saving the object in a file
         file = path + str(count) + ".pkl"
@@ -92,7 +100,8 @@ while ((len(urls) != 0) & (count <= max_pages)):
         print("Error: " + url)
         print(e)
         if urls:
-            urls.pop(0)
+            if not alreadyPop:
+                urls.pop(0)
 
 end = datetime.datetime.now()
 print("Time", str(end - begin))
