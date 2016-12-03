@@ -1,3 +1,4 @@
+#!-*- coding: utf8 -*-
 import wikipedia
 import string
 
@@ -36,6 +37,15 @@ def tokenize(text):
     return stemmed
 
 
+# {'page':'Pagina atual', 'term': 'Termo a ser linkado', 'position':'Posicao do termo na pagina', 'candidates':['Lista de paginas candidatas a link']}
+
+# for (f,w,i,j,ind) in cand:
+# 	#f  similaridade entre texto e titulo do link , w o termo sem stopword, i posição no array das palavras , j quantas palavras a partir do inicio, ind indice do link
+# 	print str(f)+" || "+w+" || "+wikipediaPageList[ind].title+" | "+str(i)+" "+str(j)
+# print "------------------------------------------------------------"
+
+
+
 
 data = [
     {'page':'Dii Consentes', 'candidates':['Mercury (element)','Mercury (planet)', 'Mercury (Marvel Comics)','Mercury (mythology)']},
@@ -67,14 +77,16 @@ for dat in data:
     corpus = []
 
     ## le a pagina e coloca no corpus
-    text = wikipedia.summary(page)
+    text = wikipedia.page(page).content
     text = process(text)
     corpus.append(text)
 
     for candidate in candidates:
-        candidatetext = wikipedia.summary(candidate)
+        candidatetext = wikipedia.page(candidate).content
         candidatetext = process(candidatetext)
         corpus.append(candidatetext)
+
+    ## tentar fazer o tfidf so pras comparacoes dois a dois
 
     tfidf = TfidfVectorizer(tokenizer=tokenize, stop_words='english')
     tfs = tfidf.fit_transform(corpus)
