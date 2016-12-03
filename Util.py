@@ -64,8 +64,8 @@ def getMinimumDistance(wikiPage1, wikiPage2):
         notFound = True
         calculateGraphDistance(wikiPage2, wikiPage1,0)
         #just to check the method is ok...
-        print "Parent",parent
-        print parentLinks
+        # print "Parent",parent
+        # print parentLinks
     return minimumDepthFound
 
 
