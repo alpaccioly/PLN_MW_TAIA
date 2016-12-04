@@ -14,13 +14,15 @@ sys.setdefaultencoding('utf8')
 
 ############################################
 
-wikipediaPageList = Util.wikipediaPageList
+wikipediaPageList = Util.wikipediaPageList[:500]
 core = WikiCore(wikipediaPageList)
 
 def process(page):
 	cand = core.generateCandidates(page)
 	# convertendo pra lista pra poder trabalhar com indices
 	cand = list(cand)
+
+	page_index = wikipediaPageList.index(page)
 
 	# agrupar em candidatos concorrentes de acordo com o indice de 'cand'
 	group = groupCandidates(cand)
@@ -37,7 +39,7 @@ def process(page):
 		# print str(f)+" || "+w+" || "+wikipediaPageList[ind].title+" | ", i, j, " | ", cos, dist
 		# print "------------------------------------------------------------"
 
-	links = chooseLinks(cand, group, score)
+	links = chooseLinks(cand, group, score, page_index)
 	return links
 
 

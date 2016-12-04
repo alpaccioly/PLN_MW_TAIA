@@ -47,7 +47,7 @@ def getExcerpt(words, idx, nwords):
     return string.join(words[begin:end])
 
 # entrada: lista de lista
-def removeDuplicates(a):
+def removeDuplicatesListofList(a):
     b = [set(aa) for aa in a]
     c = [tuple(bb) for bb in b]
     d = list(set(c))
@@ -99,10 +99,32 @@ def groupCandidates(cand):
             if w1 == w2 and idx1 == idx2:
                 if not (i1 == i2):
                     group[i1].append(i2)
-    return removeDuplicates(group)
+    return removeDuplicatesListofList(group)
 
 
-def chooseLinks(cand, group, score):
+def removeLoopsAndDuplicates(links, page_index):
+    filtered = []
+    for (w1,idx1,size1,cos1,dist1,pageidx1) in links:
+        found = False
+        for (w2,idx2,size2,cos2,dist2,pageidx2) in filtered:
+            if w1 == w2 and pageidx1 == pageidx2:
+                # tem uma repeticao
+                found = True
+                if idx1 < idx2:
+                    # o indice novo eh menor do que o indice antigo
+                    filtered.remove((w2,idx2,size2,cos2,dist2,pageidx2))
+                    filtered.append((w1,idx1,size1,cos1,dist1,pageidx1))
+        if not found:
+            filtered.append((w1,idx1,size1,cos1,dist1,pageidx1))
+
+        ## remove loops aqui
+        if pageidx1 == page_index:
+            filtered.remove((w1,idx1,size1,cos1,dist1,pageidx1))
+
+    return filtered
+
+
+def chooseLinks(cand, group, score, page_index):
     bestof = []
     for g in group:
         group_cos = []
@@ -131,6 +153,9 @@ def chooseLinks(cand, group, score):
         # dist: distancia entre as paginas
         # pageidx: index do link
         links.append((w,idx,size,cos,dist,pageidx))
+
+
+    links = removeLoopsAndDuplicates(links, page_index)
 
     return links
 
