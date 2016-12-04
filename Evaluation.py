@@ -46,6 +46,14 @@ def getExcerpt(words, idx, nwords):
     end = idx + nwords + nw2
     return string.join(words[begin:end])
 
+# entrada: lista de lista
+def removeDuplicates(a):
+    b = [set(aa) for aa in a]
+    c = [tuple(bb) for bb in b]
+    d = list(set(c))
+    e = [list(dd) for dd in d]
+    return e
+
 def evalCandidate(pagelist, curridx, similarity, term, termidx, nwords, candidx):
 # f: similaridade entre texto e titulo do link
 # w: o termo sem stopword
@@ -73,7 +81,61 @@ def evalCandidate(pagelist, curridx, similarity, term, termidx, nwords, candidx)
     cos = cosine(pagefeat, candfeat)
     dist = getMinimumDistance(page, cand)
 
+    # if dist == 0:
+    #     print "*****DISTANCIA ZERO: ", page.title, " | ", cand.title
+    #     print "***", page.url, " | ", cand.url
+
     return cos, dist
+
+
+def groupCandidates(cand):
+    group = []
+    for i in cand:
+        group.append([])
+
+    for i1 in range(len(cand)):
+        (f1, w1, idx1, siz1, candidx1) = cand[i1]
+        group[i1].append(i1)
+        for i2 in range(len(cand)):
+            (f2, w2, idx2, siz2, candidx2) = cand[i2]
+            # if w1 == w2 and idx1 == idx2 and siz1 == siz2:
+            if w1 == w2 and idx1 == idx2:
+                if not (i1 == i2):
+                    group[i1].append(i2)
+    return removeDuplicates(group)
+
+
+def chooseLinks(cand, group, score):
+    bestof = []
+    for g in group:
+        group_cos = []
+        group_dist = []
+        for gg in g:
+            (cos, dist, f) = score[gg]
+            group_cos.append(cos)
+            group_dist.append(dist)
+        bestcosidx = group_cos.index(min(group_cos))
+        bestdistidx = group_dist.index(min(group_dist))
+        if (bestcosidx == bestdistidx):
+            # print "temos um melhor", min(group_cos), min(group_dist)
+            bestof.append((g[bestcosidx],group_cos[bestcosidx],group_dist[bestcosidx]))
+        else:
+            # print "empate"
+            ### no empate eu to escolhendo o menor cosseno
+            bestof.append((g[bestcosidx],group_cos[bestcosidx],group_dist[bestcosidx]))
+
+    links = []
+    for (candidx,cos,dist) in bestof:
+        (f,w,idx,size,pageidx) = cand[candidx]
+        # w: termo a ser linkado sem stop word
+        # idx: indice da primeira palavra a ser linkada
+        # size: quantas palavras a partir da primeira
+        # cos: cosseno entre as paginas
+        # dist: distancia entre as paginas
+        # pageidx: index do link
+        links.append((w,idx,size,cos,dist,pageidx))
+
+    return links
 
 # data = [
 #     {'page':'Dii Consentes', 'candidates':['Mercury (element)','Mercury (planet)', 'Mercury (Marvel Comics)','Mercury (mythology)']},
