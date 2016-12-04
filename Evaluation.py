@@ -82,10 +82,6 @@ def evalCandidate(pagelist, page, similarity, term, termidx, nwords, candidx):
     cos = cosine(pagefeat, candfeat)
     dist = getMinimumDistance(page, cand)
 
-    # if dist == 0:
-    #     print "*****DISTANCIA ZERO: ", page.title, " | ", cand.title
-    #     print "***", page.url, " | ", cand.url
-
     return cos, dist
 
 

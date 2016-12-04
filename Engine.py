@@ -43,17 +43,17 @@ def process(page):
 
 
 
-# for page_index in range(3):
-# 	page = wikipediaPageList[page_index]
-#
-# 	print "\n",page_index, page.title
-# 	print "------------------------"
-#
-# 	page = wikipediaPageList[page_index]
-# 	links = process(page)
-#
-# 	# printing the links
-# 	print "LINKS GERADOS DA PAGINA: ", len(links)
-# 	for (w,idx,size,cos,dist,pageidx) in links:
-# 		link = wikipediaPageList[pageidx]
-# 		print "\t", w, idx, " -> ", link.title
+for page_index in range(3):
+	page = wikipediaPageList[page_index]
+
+	print "\n",page_index, page.title
+	print "------------------------"
+
+	page = wikipediaPageList[page_index]
+	links = process(page)
+
+	# printing the links
+	print "LINKS GERADOS DA PAGINA: ", len(links)
+	for (w,idx,size,cos,dist,pageidx) in links:
+		link = wikipediaPageList[pageidx]
+		print "\t", w, idx, " -> ", link.title

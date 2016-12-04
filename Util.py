@@ -56,6 +56,8 @@ def getMinimumDistance(wikiPage1, wikiPage2):
     global notFound
     global minimumDepthFound
 
+    minimumDepthFound = 11
+
     if wikiPage1.url == wikiPage2.url:
         minimumDepthFound = 0
     else:
