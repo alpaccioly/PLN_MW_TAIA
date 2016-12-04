@@ -14,15 +14,24 @@ sys.setdefaultencoding('utf8')
 
 ############################################
 
-wikipediaPageList = Util.wikipediaPageList[:500]
+wikipediaPageList = Util.wikipediaPageList
 core = WikiCore(wikipediaPageList)
+
+def searchPage(page):
+	idx = 0
+	for i in range(len(wikipediaPageList)):
+		pg = wikipediaPageList[i]
+		if pg.url == page.url:
+			idx = i
+			break
+	return idx
 
 def process(page):
 	cand = core.generateCandidates(page)
 	# convertendo pra lista pra poder trabalhar com indices
 	cand = list(cand)
 
-	page_index = wikipediaPageList.index(page)
+	page_index = searchPage(page)
 
 	# agrupar em candidatos concorrentes de acordo com o indice de 'cand'
 	group = groupCandidates(cand)
@@ -45,17 +54,17 @@ def process(page):
 
 
 
-for page_index in range(3):
-	page = wikipediaPageList[page_index]
-
-	print "\n",page_index, page.title
-	print "------------------------"
-
-	page = wikipediaPageList[page_index]
-	links = process(page)
-
-	# printing the links
-	print "LINKS GERADOS DA PAGINA: ", len(links)
-	for (w,idx,size,cos,dist,pageidx) in links:
-		link = wikipediaPageList[pageidx]
-		print "\t", w, idx, " -> ", link.title
+# for page_index in range(3):
+# 	page = wikipediaPageList[page_index]
+#
+# 	print "\n",page_index, page.title
+# 	print "------------------------"
+#
+# 	page = wikipediaPageList[page_index]
+# 	links = process(page)
+#
+# 	# printing the links
+# 	print "LINKS GERADOS DA PAGINA: ", len(links)
+# 	for (w,idx,size,cos,dist,pageidx) in links:
+# 		link = wikipediaPageList[pageidx]
+# 		print "\t", w, idx, " -> ", link.title
