@@ -73,6 +73,7 @@ def evalCandidate(pagelist, curridx, similarity, term, termidx, nwords, candidx)
     # tirando os tokens e os stop words dentro da funcao do scikit
     # porque a do nltk eh mais lenta
     tfidf = TfidfVectorizer(tokenizer=tokenize, stop_words='english')
+    # ta vindo um erro de deprecation da funcao "rank" daqui
     tfs = tfidf.fit_transform([pagetext, candtext])
     tfidfmatrix = tfs.toarray()
     pagefeat = tfidfmatrix[0,:]
