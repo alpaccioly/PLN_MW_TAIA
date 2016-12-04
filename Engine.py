@@ -14,6 +14,9 @@ sys.setdefaultencoding('utf8')
 
 ############################################
 
+wikipediaPageList = Util.wikipediaPageList
+core = WikiCore(wikipediaPageList)
+
 def process(page):
 	cand = core.generateCandidates(page)
 	# convertendo pra lista pra poder trabalhar com indices
@@ -29,7 +32,7 @@ def process(page):
 		#i posição no array das palavras
 		#j quantas palavras a partir do inicio
 		#ind indice do link
-		cos, dist = evalCandidate(wikipediaPageList, page_index, f, w, i, j, ind)
+		cos, dist = evalCandidate(wikipediaPageList, page, f, w, i, j, ind)
 		score.append((cos,dist,f))
 		# print str(f)+" || "+w+" || "+wikipediaPageList[ind].title+" | ", i, j, " | ", cos, dist
 		# print "------------------------------------------------------------"
@@ -38,20 +41,19 @@ def process(page):
 	return links
 
 
-wikipediaPageList = Util.wikipediaPageList
-core = WikiCore(wikipediaPageList)
 
-for page_index in range(3):
-	page = wikipediaPageList[page_index]
 
-	print "\n",page_index, page.title
-	print "------------------------"
-
-	page = wikipediaPageList[page_index]
-	links = process(page)
-
-	# printing the links
-	print "LINKS GERADOS DA PAGINA: ", len(links)
-	for (w,idx,size,cos,dist,pageidx) in links:
-		link = wikipediaPageList[pageidx]
-		print "\t", w, idx, " -> ", link.title
+# for page_index in range(3):
+# 	page = wikipediaPageList[page_index]
+#
+# 	print "\n",page_index, page.title
+# 	print "------------------------"
+#
+# 	page = wikipediaPageList[page_index]
+# 	links = process(page)
+#
+# 	# printing the links
+# 	print "LINKS GERADOS DA PAGINA: ", len(links)
+# 	for (w,idx,size,cos,dist,pageidx) in links:
+# 		link = wikipediaPageList[pageidx]
+# 		print "\t", w, idx, " -> ", link.title

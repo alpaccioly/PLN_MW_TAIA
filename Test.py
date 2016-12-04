@@ -1,6 +1,7 @@
 from __future__ import division
 
 import Util
+from Engine import process
 
 def vectorize(a,b):
     dictionary = list(set(a) | set(b))
@@ -69,6 +70,8 @@ def calculateMetrics(a,b):
         else:
             print "entrou no else"
 
+    # print tn, tp, fn, fp
+
     precision = calculatePrecision(tn, tp, fn, fp)
     recall = calculateRecall(tn, tp, fn, fp)
     accuracy = calculateAccuracy(tn, tp, fn, fp)
@@ -78,13 +81,14 @@ def calculateMetrics(a,b):
 
     return {'precision':precision, 'recall':recall, 'accuracy':accuracy, 'f-measure':fmeasure}
 
-## so p testar
-def process(document):
-    return document.links
+# ## so p testar
+# def process(document):
+#     return document.links
+
+
 
 
 ##################### main #####################
-
 
 # a = [('a',21),('b',43),('c',23),('d',30),('e',45)] # ground truth
 # b = [('a',0),('d',30),('e',45),('f',21)]           # estimate
@@ -108,13 +112,19 @@ total_tn = 0
 total_fp = 0
 total_fn = 0
 
-for document in database:
+for document in database[:5]:
     # process eh a funcao que vai fazer tudo e devolver os links
     # os links serao devolvidos do mesmo jeito que os links do objeto
     true_links = document.links
     estimated_links = process(document)
 
-    v1, v2 = vectorize(true_links, estimated_links)
+    links = [(w.lower(), database[pageidx].url) for (w,idx,size,cos,dist,pageidx) in estimated_links]
+
+    # print "true: ", true_links
+    # print "novolink: ", links
+    # print len(true_links), " | ", len(links), len(set(links))
+
+    v1, v2 = vectorize(true_links, links)
     metrics = calculateMetrics(v1, v2)
 
     print document.title, metrics
@@ -123,6 +133,8 @@ for document in database:
     total_precision.append(metrics['precision'])
     total_recall.append(metrics['recall'])
     total_fmeasure.append(metrics['f-measure'])
+
+    print "------------------------------------------"
 
 accuracy = sum(total_accuracy) / len(total_accuracy)
 precision = sum(total_precision) / len(total_precision)

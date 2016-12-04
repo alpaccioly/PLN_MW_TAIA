@@ -54,13 +54,13 @@ def removeDuplicates(a):
     e = [list(dd) for dd in d]
     return e
 
-def evalCandidate(pagelist, curridx, similarity, term, termidx, nwords, candidx):
+def evalCandidate(pagelist, page, similarity, term, termidx, nwords, candidx):
 # f: similaridade entre texto e titulo do link
 # w: o termo sem stopword
 # i: posição no array das palavras
 # j: quantas palavras a partir do inicio
 # ind: indice do link
-    page = pagelist[curridx]
+    # page = pagelist[curridx]
     pagewords = page.content.split(' ')
     pageexcerpt = getExcerpt(pagewords, termidx, nwords)
     pagetext = process(pageexcerpt)
