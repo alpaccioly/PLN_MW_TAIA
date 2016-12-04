@@ -88,9 +88,10 @@ def calculateMetrics(a,b):
 
 def removeNotInDatabase(links, database):
     filtered = []
+    citationneeded = 'citation needed'
     for (w,url) in links:
         page = Util.getWikiPageFromUrl(url)
-        if page:
+        if page and not (w == citationneeded):
             filtered.append((w,url))
     return filtered
 
@@ -128,17 +129,19 @@ total_fp = 0
 total_fn = 0
 
 
-for document in database[500:504]:
+for document in database[502:504]:
     # process eh a funcao que vai fazer tudo e devolver os links
     # os links serao devolvidos do mesmo jeito que os links do objeto
     true_links = document.links
     estimated_links = process(document)
 
+    # print "\nestimated: ", sorted(estimated_links), "\n"
+
     links = [(w.lower(), database[pageidx].url) for (w,idx,size,cos,dist,pageidx) in estimated_links]
     true_links = removeNotInDatabase(true_links, database)
 
-    print "true: ", true_links
-    print "\nnovolink: ", links
+    # print "true: ", sorted(true_links)
+    # print "\nnovolink: ", links
 
     v1, v2 = vectorize(true_links, links)
     metrics = calculateMetrics(v1, v2)

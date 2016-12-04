@@ -8,6 +8,7 @@ from WikiCore import WikiCore
 from Evaluation import evalCandidate
 from Evaluation import groupCandidates
 from Evaluation import chooseLinks
+from Evaluation import removeCandLoopsAndDuplicates
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -27,16 +28,13 @@ def searchPage(page):
 	return idx
 
 def process(page):
+	page_index = searchPage(page)
 	cand = core.generateCandidates(page)
 	# convertendo pra lista pra poder trabalhar com indices
 	cand = list(cand)
+	cand = removeCandLoopsAndDuplicates(cand, page_index)
 
-	page_index = searchPage(page)
-
-	# agrupar em candidatos concorrentes de acordo com o indice de 'cand'
-	group = groupCandidates(cand)
 	score = []
-
 	for (f,w,i,j,ind) in cand:
 		#f  similaridade entre texto e titulo do link
 		#w o termo sem stopword
@@ -47,7 +45,10 @@ def process(page):
 		score.append((cos,dist,f))
 		# print str(f)+" || "+w+" || "+wikipediaPageList[ind].title+" | ", i, j, " | ", cos, dist
 		# print "------------------------------------------------------------"
+		# print (f,w,i,j,ind)," | ", cos, dist, " | ", wikipediaPageList[ind].title
 
+	# agrupar em candidatos concorrentes de acordo com o indice de 'cand'
+	group = groupCandidates(cand)
 	links = chooseLinks(cand, group, score, page_index)
 	return links
 

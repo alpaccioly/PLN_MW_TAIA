@@ -2,18 +2,20 @@ import nltk
 from nltk.corpus import stopwords
 import sys
 
+from Util import getWordsFromWikiPage
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 class WikiCore:
 	def __init__(self, pages):
-		
+
 		self.index = {}
 		self.inverted_index = {}
 		self.pages = pages
-		
+
 		self.stop_words = set(stopwords.words('english'))
-		
+
 		for i in range(len(pages)):
 			wikipediaPage = pages[i]
 			title = wikipediaPage.title.upper()
@@ -24,7 +26,7 @@ class WikiCore:
 				if w.lower() not in self.stop_words:
 					w_upper = w.upper()
 					if w_upper in self.inverted_index:
-						
+
 						self.inverted_index[w_upper].add(i)
 					else:
 						self.inverted_index[w_upper] = {i}
@@ -33,7 +35,8 @@ class WikiCore:
 	def generateCandidates(self , page):
 		cand = set()
 		i = 0
-		words = page.content.split(' ')
+		# words = page.content.split(' ')
+		words = getWordsFromWikiPage(page)
 		n = len(words)
 		while(i<n):
 			w = words[i].upper()
@@ -53,7 +56,7 @@ class WikiCore:
 			cand_verbete = sorted(cand_verbete, key = lambda x: -x[0])
 			if(len(cand_verbete)>0):
 				max_value = cand_verbete[0][0]
-			cand_verbete = filter(lambda x: x[0]>= max_value, cand_verbete)	
+			cand_verbete = filter(lambda x: x[0]>= max_value, cand_verbete)
 			cand = set.union(cand,cand_verbete)
 			i = i+1
 		return cand

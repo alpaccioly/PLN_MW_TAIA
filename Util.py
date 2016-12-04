@@ -54,7 +54,6 @@ def getWikiPagesFromUrlDictionary():
     return dictionary
 
 def getMinimumDistance(wikiPage1, wikiPage2):
-    minimumDepthFound = 11
     global notFound
     global minimumDepthFound
 
@@ -108,7 +107,7 @@ punctuationSet = (string.punctuation.replace('-',''))
 string.punctuation
 
 def getWordsFromWikiPage(page):
-    pageContent = str(page.pageContent)
+    pageContent = str(page.content)
     pagewords0 = pageContent.split(' ')
     pagewords = []
     for word in pagewords0:

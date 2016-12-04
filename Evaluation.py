@@ -10,6 +10,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.spatial.distance import cosine
 
 from Util import getMinimumDistance
+from Util import getWordsFromWikiPage
 
 # encoding=utf8
 import sys
@@ -60,15 +61,17 @@ def evalCandidate(pagelist, page, similarity, term, termidx, nwords, candidx):
 # i: posição no array das palavras
 # j: quantas palavras a partir do inicio
 # ind: indice do link
-    # page = pagelist[curridx]
-    pagewords = page.content.split(' ')
+    pagewords = getWordsFromWikiPage(page)
     pageexcerpt = getExcerpt(pagewords, termidx, nwords)
     pagetext = process(pageexcerpt)
     # print term, " | ", pageexcerpt
 
     cand = pagelist[candidx]
-    candwords = cand.content.split(' ')
-    candtext = process(cand.content)
+    # candwords = wikipedia.summary(cand.title)
+    candwords = getWordsFromWikiPage(cand)
+    # end = min(100,len(candwords))
+    # candwords = candwords[:end]
+    candtext = process(string.join(candwords))
 
     # tirando os tokens e os stop words dentro da funcao do scikit
     # porque a do nltk eh mais lenta
@@ -96,11 +99,33 @@ def groupCandidates(cand):
         for i2 in range(len(cand)):
             (f2, w2, idx2, siz2, candidx2) = cand[i2]
             # if w1 == w2 and idx1 == idx2 and siz1 == siz2:
-            if w1 == w2 and idx1 == idx2:
-                if not (i1 == i2):
+            # if w1 == w2 and idx1 == idx2:
+            if idx2 in range(idx1,idx1+siz1):
+                if not (idx1 == idx2):
                     group[i1].append(i2)
     return removeDuplicatesListofList(group)
 
+
+def removeCandLoopsAndDuplicates(cand, page_index):
+    filtered = []
+    for (f1,w1,i1,j1,ind1) in cand:
+        found = False
+        for (f2,w2,i2,j2,ind2) in filtered:
+            if w1 == w2 and ind1 == ind2:
+                # tem uma repeticao
+                found = True
+                if i1 < i2:
+                    # o indice novo eh menor do que o indice antigo
+                    filtered.remove((f2,w2,i2,j2,ind2))
+                    filtered.append((f1,w1,i1,j1,ind1))
+        if not found:
+            filtered.append((f1,w1,i1,j1,ind1))
+
+        ## remove loops aqui
+        if ind1 == page_index:
+            filtered.remove((f1,w1,i1,j1,ind1))
+
+    return filtered
 
 def removeLoopsAndDuplicates(links, page_index):
     filtered = []
@@ -152,7 +177,9 @@ def chooseLinks(cand, group, score, page_index):
         # cos: cosseno entre as paginas
         # dist: distancia entre as paginas
         # pageidx: index do link
-        links.append((w,idx,size,cos,dist,pageidx))
+
+        if cos < 0.8 and dist <= 3:
+            links.append((w,idx,size,cos,dist,pageidx))
 
 
     links = removeLoopsAndDuplicates(links, page_index)
