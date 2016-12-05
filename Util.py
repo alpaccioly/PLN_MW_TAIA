@@ -47,10 +47,11 @@ def getTestWikipediaPages():
     test_path = path+"test/"
     files = os.listdir(test_path)
     for the_file in os.listdir(test_path):
-        file_path = os.path.join(path, the_file)
+        file_path = os.path.join(test_path, the_file)
         try:
             if os.path.isfile(file_path):
                 with open(file_path, 'rb') as input:
+                    print "file: ", file_path
                     wikipediaPage = pickle.load(input)
                 test_wiki.append(wikipediaPage)
         except Exception as e:
