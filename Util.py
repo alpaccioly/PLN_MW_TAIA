@@ -29,7 +29,9 @@ def deleteFilesFromFolder():
 
 def getWikipediaPages():
     wikipediaPageList = []
-    for the_file in os.listdir(path):
+    files = os.listdir(path)
+    ordered_files = sorted(files, key=lambda x: x)
+    for the_file in ordered_files:
         file_path = os.path.join(path, the_file)
         try:
             if os.path.isfile(file_path):
@@ -39,6 +41,21 @@ def getWikipediaPages():
         except Exception as e:
             print(e)
     return wikipediaPageList
+
+def getTestWikipediaPages():
+    test_wiki = []
+    test_path = path+"test/"
+    files = os.listdir(test_path)
+    for the_file in os.listdir(test_path):
+        file_path = os.path.join(path, the_file)
+        try:
+            if os.path.isfile(file_path):
+                with open(file_path, 'rb') as input:
+                    wikipediaPage = pickle.load(input)
+                test_wiki.append(wikipediaPage)
+        except Exception as e:
+            print(e)
+    return test_wiki
 
 
 def getWikiPageFromUrl(url):

@@ -116,7 +116,10 @@ def removeNotInDatabase(links, database):
 # read the database
 database = Util.getWikipediaPages()
 
+testSet = Util.getTestWikipediaPages()
+
 print "Size of the database: ", len(database)
+print "Size of the TestSet: ", len(testSet)
 
 total_accuracy = []
 total_precision = []
@@ -129,7 +132,8 @@ total_fp = 0
 total_fn = 0
 
 
-for document in database[502:504]:
+for document in testSet:#database[0:1]:
+    print document.title
     # process eh a funcao que vai fazer tudo e devolver os links
     # os links serao devolvidos do mesmo jeito que os links do objeto
     true_links = document.links
@@ -155,19 +159,20 @@ for document in database[502:504]:
 
     print "------------------------------------------"
 
-accuracy = sum(total_accuracy) / len(total_accuracy)
-precision = sum(total_precision) / len(total_precision)
-recall = sum(total_recall) / len(total_recall)
-fmeasure = sum(total_fmeasure) / len(total_fmeasure)
+if(len(total_accuracy)>0):
+    accuracy = sum(total_accuracy) / len(total_accuracy)
+    precision = sum(total_precision) / len(total_precision)
+    recall = sum(total_recall) / len(total_recall)
+    fmeasure = sum(total_fmeasure) / len(total_fmeasure)
 
-print "\nMedia macro das medidas"
-print "\tAccuracy: ", accuracy
-print "\tPrecision: ", precision
-print "\tRecall: ", recall
-print "\tF-measure: ", fmeasure
+    print "\nMedia macro das medidas"
+    print "\tAccuracy: ", accuracy
+    print "\tPrecision: ", precision
+    print "\tRecall: ", recall
+    print "\tF-measure: ", fmeasure
 
-print "\nMedia micro das medidas"
-print "\tAccuracy: ", calculateAccuracy(total_tn, total_tp, total_fn, total_fp)
-print "\tPrecision: ", calculatePrecision(total_tn, total_tp, total_fn, total_fp)
-print "\tRecall: ", calculateRecall(total_tn, total_tp, total_fn, total_fp)
-print "\tF-measure: ", calculateFmeasure(calculatePrecision(total_tn, total_tp, total_fn, total_fp), calculateRecall(total_tn, total_tp, total_fn, total_fp))
+    print "\nMedia micro das medidas"
+    print "\tAccuracy: ", calculateAccuracy(total_tn, total_tp, total_fn, total_fp)
+    print "\tPrecision: ", calculatePrecision(total_tn, total_tp, total_fn, total_fp)
+    print "\tRecall: ", calculateRecall(total_tn, total_tp, total_fn, total_fp)
+    print "\tF-measure: ", calculateFmeasure(calculatePrecision(total_tn, total_tp, total_fn, total_fp), calculateRecall(total_tn, total_tp, total_fn, total_fp))
