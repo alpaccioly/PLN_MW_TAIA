@@ -74,7 +74,10 @@ class WikiCore:
 		for ind in articles_ids:
 			title = self.pages[ind].title.upper()
 			title_words = set(title.split(' '))
-			w_words = set(w.split(' '))
+			w_arr = w.split(' ')
+			w_words = set(w_arr)
+			if(w_arr[len(w_arr)-1] in self.stop_words):
+				j = j-1
 			title_words = title_words - self.stop_words
 			w_words = w_words - self.stop_words
 
