@@ -4,7 +4,11 @@ import Util
 from Engine import process
 
 def vectorize(a,b):
+    a = [(w.lower(),url) for (w,url) in a]
+    b = [(w.lower(),url) for (w,url) in b]
+
     dictionary = list(set(a) | set(b))
+
     v1 = [0]*len(dictionary)
     v2 = [0]*len(dictionary)
     for aa in a:
@@ -60,6 +64,7 @@ def calculateMetrics(a,b):
         aa = a[i]
         bb = b[i]
         if aa == 0 and bb == 0:
+            # meio cagado esse true negative mas ok
             tn += 1
         elif aa == 0 and bb == 1:
             fp += 1
@@ -70,7 +75,7 @@ def calculateMetrics(a,b):
         else:
             print "entrou no else"
 
-    # print tn, tp, fn, fp
+    print "measures: ", tn, tp, fn, fp
 
     precision = calculatePrecision(tn, tp, fn, fp)
     recall = calculateRecall(tn, tp, fn, fp)
@@ -80,6 +85,17 @@ def calculateMetrics(a,b):
     saveMeasures(tn, tp, fn, fp)
 
     return {'precision':precision, 'recall':recall, 'accuracy':accuracy, 'f-measure':fmeasure}
+
+def removeNotInDatabase(links, database):
+    filtered = []
+    citationneeded = 'citation needed'
+    for (w,url) in links:
+        page = Util.getWikiPageFromUrl(url)
+        if page and not (w == citationneeded):
+            filtered.append((w,url))
+    return filtered
+
+
 
 # ## so p testar
 # def process(document):
@@ -112,17 +128,20 @@ total_tn = 0
 total_fp = 0
 total_fn = 0
 
-for document in database[:5]:
+
+for document in database[502:504]:
     # process eh a funcao que vai fazer tudo e devolver os links
     # os links serao devolvidos do mesmo jeito que os links do objeto
     true_links = document.links
     estimated_links = process(document)
 
-    links = [(w.lower(), database[pageidx].url) for (w,idx,size,cos,dist,pageidx) in estimated_links]
+    # print "\nestimated: ", sorted(estimated_links), "\n"
 
-    # print "true: ", true_links
-    # print "novolink: ", links
-    # print len(true_links), " | ", len(links), len(set(links))
+    links = [(w.lower(), database[pageidx].url) for (w,idx,size,cos,dist,pageidx) in estimated_links]
+    true_links = removeNotInDatabase(true_links, database)
+
+    # print "true: ", sorted(true_links)
+    # print "\nnovolink: ", links
 
     v1, v2 = vectorize(true_links, links)
     metrics = calculateMetrics(v1, v2)

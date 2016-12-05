@@ -1,6 +1,7 @@
 import os.path
 import WikiPage
 import pickle
+import string
 
 import sys
 
@@ -99,6 +100,25 @@ def calculateGraphDistance(wikiPage1, wikiPage2, depth):
             for wiki in linksToBeVisited:
                 calculateGraphDistance(wiki, wikiPage2, depth)
     return depth
+
+
+
+punctuationSet = (string.punctuation.replace('-',''))
+string.punctuation
+
+def getWordsFromWikiPage(page):
+    pageContent = str(page.content)
+    pagewords0 = pageContent.split(' ')
+    pagewords = []
+    for word in pagewords0:
+        word = word.translate(None, punctuationSet)
+        wordsAfterRemPunc = word.split('\n')
+        for wordAfterRemPunc in wordsAfterRemPunc:
+            if len(wordAfterRemPunc) > 0:
+                pagewords.append(unicode(wordAfterRemPunc))
+
+    return pagewords
+
 
 
 wikipediaPageList = getWikipediaPages()
